@@ -166,9 +166,9 @@ class PostController extends Controller
 
         return redirect()->route('posts.index');
     }
-    // public function home()
-    // {
-    //     // return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
-    //     return view('home');
-    // }
+    public function home()
+    {
+        // return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
+        return view('home');
+    }
 }
