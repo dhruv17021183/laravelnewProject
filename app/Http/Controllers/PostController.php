@@ -176,4 +176,9 @@ class PostController extends Controller
         // return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
         return view('home');
     }
+    public function home2()
+    {
+        // return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
+        return view('home');
+    }
 }
