@@ -102,3 +102,6 @@ Auth::routes();
 Route::get('/',function() {
     return view('welcome',['name' => '<b>Dhruv<b>']);
 });
+Route::get('/tejas',function() {
+    return view('welcome',['name' => '<b>tejas<b>']);
+});
