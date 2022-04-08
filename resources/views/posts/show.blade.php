@@ -4,15 +4,40 @@
 @section('content')
 <div class="row">
   <div class="col-8">
-    <h1>{{$post->title}}</h1>
+    @if($post->image)
+       <div style="background-image: url('{{ $post->image->url()}}'); min-height: 500px; color: white; text-align: center;">
+         <h1 style="padding-top: 100px; text-shadow: 1px 2px #000">
+    @else 
+         <h1>
+    @endif
+        {{ $post->title}}
+
     <p>{{$post->content}}</p>
-    <p>Added{{$post->created_at->diffForHumans()}}</p>
+    {{-- <p>Added{{$post->created_at->diffForHumans()}}</p> --}}
 
-    @if(now()->diffInMinutes($post->created_at) < 5) <span class="badge badge-success">
-      New !</span>
+      @badge(['show' => now()->diffInMinutes($post->created_at) < 30])
+        Brand New post!
+      @endbadge
+
+      @if($post->image)
+          </h1>
+      </div>
+      @else
+         </h1>
       @endif
-      <h4>Comments</h4>
 
+ 
+
+    @update(['date' => $post->created_at, 'name' => $post->user->name])
+    @endupdate
+    @update(['date' => $post->updated_at])
+            Updated
+    @endupdate
+    @component('components.tags',['tags' => $post->tags])
+    @endcomponent
+    
+      <h4>Comments</h4>
+      @include('comments.form')
       @forelse($post->comments as $comment)
       <p class="text-muted">
         {{$comment->content}},Added {{$comment->created_at->diffForHumans()}}

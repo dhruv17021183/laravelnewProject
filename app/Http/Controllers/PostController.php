@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\BlogPost;
 use App\Models\User;
 use App\Models\Comment;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -53,7 +55,7 @@ class PostController extends Controller
         return view(
             'posts.index',
             [
-                'posts'=>BlogPost::latest()->withCount('comments')->with('user')->get(),
+                'posts'=>BlogPost::latest()->withCount('comments')->with('user')->with('tags')->get(),
                 'mostCommented' => BlogPost::mostCommented()->take(5)->get(),
                 'mostActive' =>User::withMostBlogPosts()->take(5)->get(),
                 'mostActiveLastMonth' => User::withMostBlogPostslastmonth()->take(5),
@@ -85,7 +87,36 @@ class PostController extends Controller
         $post=BlogPost::create($validated);
         $post->save();
 
+        // $hasFile = $request->hasFile('thumbnail');
+        /* File Storage in Storage Directory
+        dump($hasFile);
         
+        if($hasFile)
+        {
+           
+            $file = $request->file('thumbnail');
+            dump($file);
+            dump($file->getClientMimeType());
+            dump($file->getClientOriginalExtension());
+
+            dump($file->store('thumbails')); 
+            dump(Storage::disk('public')->putFile('thumbails',$file));
+
+            $name1 = $file->storeAs('thumbails',$post->id .'.' . $file->guessExtension());
+            $name2 = Storage::disk('local')->putFileAs('thumbails',$file,$post->id . '.' . $file->guessExtension());
+
+            dump(Storage::url($name1));
+            dump(Storage::disk('local')->url($name2));
+        }
+        die;
+        */
+        if($request->hasFile('thumbnail')){
+            $path = $request->file('thumbnail')->store('thumbnails');
+           
+            $post->image()->save(
+                Image::create(['path' => $path])
+            );
+        }
         $request->session()->flash('status','created!');
         return redirect()->route('posts.show',['post'=>$post->id]);
     }
@@ -104,7 +135,7 @@ class PostController extends Controller
         //     }])->findOrFail($id)
         // ]);
         return view('posts.show',[
-            'post'=>BlogPost::with('comments')->findOrFail($id),
+            'post'=>BlogPost::with('comments')->with('tags')->findOrFail($id),
         ]);
     }
 
@@ -139,6 +170,22 @@ class PostController extends Controller
         $this->authorize('update',$post);
         $validated=$request->validated();
         $post->fill($validated);
+        if($request->hasFile('thumbnail')){
+            $path = $request->file('thumbnail')->store('thumbnail');
+
+            if($post->image)
+            {
+                Storage::delete($post->image->path);
+                $post->image->path = $path;
+                $post->image->save();
+            }
+            else
+            {
+                $post->image()->save(
+                    Image::create(['path' => $path])
+                );
+            }
+        }
         $post->save();
 
         $request->session()->flash('status','updated');
@@ -171,14 +218,5 @@ class PostController extends Controller
         // return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
         return view('home');
     }
-    public function home1()
-    {
-        // return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
-        return view('home');
-    }
-    public function home2()
-    {
-        // return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
-        return view('home');
-    }
+   
 }

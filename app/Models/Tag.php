@@ -10,6 +10,6 @@ class Tag extends Model
     use HasFactory;
     public function blogPosts()
     {
-        return $this->belongsToMany('App\Models\BlogPost')->withTimestamps();
+        return $this->belongsToMany('App\Models\BlogPost')->withTimestamps()->as('tagged');
     }
 }

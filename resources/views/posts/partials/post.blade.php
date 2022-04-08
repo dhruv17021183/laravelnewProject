@@ -3,6 +3,10 @@
   Added {{ $post->created_at->diffForHumans()}}
   By {{$post->user->firstname}} {{$post->user->lastname}}
 </p>
+
+@component('components.tags',['tags' => $post->tags])
+    @endcomponent
+
 @if($post->comments_count)
 <p>{{$post->comments_count}} comments</p>
 @else

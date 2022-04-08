@@ -25,5 +25,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Blade::withoutDoubleEncoding();
+        Blade::aliasComponent('components.badge','badge');
+        Blade::aliasComponent('components.update','update');
+        Blade::aliasComponent('components.errors','errors');
+        Blade::aliasComponent('components.tag','tag');
+
     }
 }

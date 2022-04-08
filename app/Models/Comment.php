@@ -6,16 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+
 class Comment extends Model
 {
     use HasFactory;
-    protected $fillable=['content'];
+    protected $fillable=['user_id','content'];
     public function post()
     {
-        return $this->belongsTo('App\Models\BlogPost', 'blog_posts_id');
+        return $this->belongsTo('App\Models\BlogPost');
     }
-    public function scopeLatest(Builder $query)
+    // public function scopeLatest(Builder $query)
+    // {
+    //     return $query->orderBy(static::CREATED_AT,'desc');
+    // }
+    public function user()
     {
-        return $query->orderBy(static::CREATED_AT,'desc');
+        return $this->belongsTo('App\Models\User');
     }
 }

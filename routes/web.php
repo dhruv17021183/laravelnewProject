@@ -4,6 +4,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostsController;
+use App\Http\Controllers\PostCommentController;
+use App\Http\Controllers\PostTagController;
+
 
 
 /*
@@ -88,7 +92,7 @@ use App\Http\Controllers\HomeController;
 
 
 // Auth::routes();
-
+Route::get('/index',[PostsController::class,'index']);
 Route::get('/home', [HomeController::class, 'home'])->name('home');
 Route::get('/contact', [App\Http\Controllers\HomeController::class, 'contact'])->name('contact');
 Route::get('/secret',[HomeController::class,'secret'])->name('secret')->middleware('can:home.secret');
@@ -98,7 +102,18 @@ Route::resource('/posts', PostController::class);
 // Route::resource('posts',PostController::class)->only(['index','show','create','store','edit','update','destroy']);
 // Route::get('/login', [HomeController::class,'home']);
 // Route::get('auth/logout', 'Auth\AuthController@getLogout');
+
+
+// Route::resource('posts', 'PostController');
+Route::resource('posts.comments',PostCommentController::class)->only(['store']);
+// Route::resource('/posts.comments',\App\Http\Controllers\PostCommentController::class , 'store');
+
+// Route::resource('posts.comments',[PostCommentController::class, 'store']);
+
+Route::get('posts/tag/{tag}',[PostTagController::class,'index'])->name('posts.tag.index');
+
+
 Auth::routes();
-Route::get('/',function() {
-    return view('welcome',['name' => '<b>Dhruv<b>']);
-});
+// Route::get('/',function() {
+//     return view('welcome',['name' => '<b>Dhruv<b>']);
+// });

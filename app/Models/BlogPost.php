@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BlogPost extends Model
 {
+
     protected $fillable=['title','content','user_id'];
     use HasFactory;
     public function comments()
@@ -31,23 +32,30 @@ class BlogPost extends Model
         // comments_count
         return $query->withCount('comments')->orderBy('comments_count','desc');
     }
-    public static function boot()
-    {
-        parent::boot();
+    
+    // public static function boot()
+    // {
+    //     parent::boot();
 
-        // static::addGlobalScope(new DeleteAdminScope);
-        // static::addGlobalScope(new LatestScope);
+    //     static::addGlobalScope(new DeleteAdminScope);
+    //     static::addGlobalScope(new LatestScope);
 
-        // static::deleting(function (BlogPost $blogPost) {
-        //     $blogPost->comments()->delete();
-        // });
+    //     static::deleting(function (BlogPost $blogPost) {
+    //         $blogPost->comments()->delete();
+    //         $blogPost->image()->delete();
+    //     });
 
-        // static::restoring(function (BlogPost $blogPost) {
-        //     $blogPost->comments()->restore();
-        // });
-    }
+    //     static::restoring(function (BlogPost $blogPost) {
+    //         $blogPost->comments()->restore();
+    //     });
+    // }
+
     public function tags()
     {
-        return $this->belongsToMany('App\Models\Tag');
+        return $this->belongsToMany('App\Models\Tag')->withTimestamps();
+    }
+    public function image()
+    {
+        return $this->hasOne('App\Models\Image');
     }
 }

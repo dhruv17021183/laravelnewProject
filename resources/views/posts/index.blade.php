@@ -9,6 +9,7 @@
 
     @endforeach
   </div>
+  
   <div class="col-4">
     <div class="conainer">
       <div class="row">
@@ -51,11 +52,12 @@
             <h6 class="card-subtitle mb-2 text-muted">Users With Most Post Written LastMonth</h6>
           </div>
           <ul class="list-group list-group-flush">
-            @foreach($mostActiveLastMonth as $user)
+          {{-- @foreach($mostActiveLastMonth as $user)
             <li class="list-group-item">
               {{ $user->firstname}}
             </li>
             @endforeach
+          --}}
           </ul>
         </div>
       </div>
