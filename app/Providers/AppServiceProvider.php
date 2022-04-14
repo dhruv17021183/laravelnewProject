@@ -29,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
         Blade::aliasComponent('components.update','update');
         Blade::aliasComponent('components.errors','errors');
         Blade::aliasComponent('components.tag','tag');
+        Blade::aliasComponent('components.comment','comments');
+        Blade::aliasComponent('components.comment-list','commentsList');
 
     }
 }

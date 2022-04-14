@@ -114,7 +114,7 @@ class PostController extends Controller
             $path = $request->file('thumbnail')->store('thumbnails');
            
             $post->image()->save(
-                Image::create(['path' => $path])
+                Image::make(['path' => $path])
             );
         }
         $request->session()->flash('status','created!');
@@ -161,6 +161,8 @@ class PostController extends Controller
      */
     public function update(StorePost $request, $id)
     {
+        
+
         $post = BlogPost::findOrFail($id);
 
         // if(Gate::denies('update-post',$post))
@@ -182,7 +184,7 @@ class PostController extends Controller
             else
             {
                 $post->image()->save(
-                    Image::create(['path' => $path])
+                    Image::make(['path' => $path])
                 );
             }
         }

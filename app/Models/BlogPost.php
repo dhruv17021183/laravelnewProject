@@ -17,7 +17,7 @@ class BlogPost extends Model
     use HasFactory;
     public function comments()
     {
-        return $this->hasMany('App\Models\Comment', 'blog_posts_id')->latest();
+        return $this->morphMany('App\Models\Comment', 'commentable')->latest();
     }
     public function user()
     {
@@ -56,6 +56,8 @@ class BlogPost extends Model
     }
     public function image()
     {
-        return $this->hasOne('App\Models\Image');
+        // return $this->hasOne('App\Models\Image'); //This Is One To One Relationship
+        return $this->morphOne('App\Models\Image','imagable');
+
     }
 }

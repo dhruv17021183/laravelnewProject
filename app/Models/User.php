@@ -61,4 +61,14 @@ class User extends Authenticatable
         ->having('blog_posts_count', '>=',2)
         ->orderBy('blog_posts_count','desc');
     }
+    public function image()
+    {
+        // return $this->hasOne('App\Models\Image');
+        return $this->morphMany('App\Models\Comment','commentable')->latest();
+
+    }
+    public function commentsOn()
+    {
+        return $this->morphMany('App\Models\Comment', 'commentable')->latest();
+    }
 }

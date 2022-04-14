@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Storage;
 class Image extends Model
 {
     use HasFactory;
-    protected $fillable = ['path','blog_post_id'];
+    protected $fillable = ['path'];
 
-    public function blogPost()
+    public function imagable()
     {
-        return $this->belongsTo('App\Models\BlogPost');
+        return $this->MorphTo();
     }
     public function url()
     {
