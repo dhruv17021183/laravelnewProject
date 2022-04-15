@@ -14,18 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    // private    $posts=[
-    //     1=>[
-    //         'title'=>'Intro to laravel',
-    //         'content'=>'this is a short intro',
-    //         'is_new'=>true
-    //     ],
-    //     2=>[
-    //         'title'=>'Intro to php',
-    //         'content'=>'this is a short intro to php',
-    //         'is_new'=>false
-    //      ]
-    //     ];
+
     /**
      * Display a listing of the resource.
      *
