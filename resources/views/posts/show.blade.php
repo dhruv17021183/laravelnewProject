@@ -15,7 +15,7 @@
     <p>{{$post->content}}</p>
     {{-- <p>Added{{$post->created_at->diffForHumans()}}</p> --}}
 
-      @badge(['show' => now()->diffInMinutes($post->created_at) < 30])
+      @badge(['show' => now()->diffInMinutes($post->created_at) < 10])
         Brand New post!
       @endbadge
 
@@ -35,7 +35,9 @@
     @endupdate
     @component('components.tags',['tags' => $post->tags])
     @endcomponent
-    
+
+    <p>Currently read by {{ $counter }} people</p>
+   
       <h4>Comments</h4>
 
       @include('comments.form')

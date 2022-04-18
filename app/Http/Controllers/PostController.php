@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Comment;
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,13 +42,25 @@ class PostController extends Controller
         // $bp = Blogpost::with('comments')->find(1);
         // $newComment = new Comment(['content'=>'New Comment Test']);
         // dd($newComment->toArray());
+
+        $mostCommented = Cache::remember('mostCommented',now()->addSecond(10),function(){
+            return BlogPost::mostCommented()->take(5)->get();
+        });
+        $mostActive = Cache::remember('mostActive',now()->addSecond(10),function(){
+            return BlogPost::mostCommented()->take(5)->get();
+        });
+        $mostActiveLastMonth = Cache::remember('mostActiveLastMonth',now()->addSecond(10),function(){
+            return BlogPost::mostCommented()->take(5)->get();
+        });
+
         return view(
             'posts.index',
             [
                 'posts'=>BlogPost::latest()->withCount('comments')->with('user')->with('tags')->get(),
-                'mostCommented' => BlogPost::mostCommented()->take(5)->get(),
-                'mostActive' =>User::withMostBlogPosts()->take(5)->get(),
-                'mostActiveLastMonth' => User::withMostBlogPostslastmonth()->take(5),
+                'mostCommented' => $mostCommented,
+                'mostActive' =>$mostActive,
+                'mostActiveLastMonth' => $mostActiveLastMonth,
+                
         ]
       );
     }
@@ -100,7 +113,7 @@ class PostController extends Controller
         die;
         */
         if($request->hasFile('thumbnail')){
-            $path = $request->file('thumbnail')->store('thumbnails');
+            $path = $request->file('thumbnail')->store('thumbails');
            
             $post->image()->save(
                 Image::make(['path' => $path])
@@ -123,8 +136,54 @@ class PostController extends Controller
         //         return $query->latest();
         //     }])->findOrFail($id)
         // ]);
+        $blogPost = Cache::remember("blog-post-{$id}",60,function() use($id){
+            return BlogPost::with('comments')->with('tags')->findOrFail($id);
+        });
+
+        $sessionId = session()->getId();
+        $counterKey = "blog-post-{$id}-counter";   //read and start the counter 
+        $userKey = "blog-post-{$id}-users";        //fetch and store information about the user that visited the page
+
+        $users = Cache::get($userKey,[]);          //key would be sessionId of user and value would bo lastvisited time
+        $usersUpdate = [];                         //
+        $difference = 0;  //
+        $now = now();
+
+        foreach($users as $session => $lastVisit)
+        {
+            if($now->diffInMinutes($lastVisit)>=1)
+            {
+                $difference--;
+            }
+            else
+            {
+                $usersUpdate[$session] = $lastVisit;
+            }
+        }
+
+        if(!array_key_exists($sessionId,$users) || $now->diffInMinutes($users[$sessionId])>=1)
+        {
+            $difference++;
+        }
+
+        $usersUpdate[$sessionId] = $now;
+        
+        Cache::forever($userKey,$usersUpdate);
+
+        if(!Cache::has($counterKey))
+        {
+            Cache::forever($counterKey,1);
+        }
+        else{
+            Cache::increment($counterKey,$difference);
+        }
+
+        $counter = Cache::get($counterKey);
+
         return view('posts.show',[
-            'post'=>BlogPost::with('comments')->with('tags')->findOrFail($id),
+            'post'=>$blogPost,
+            'counter' => $counter,
+        
         ]);
     }
 
@@ -150,7 +209,7 @@ class PostController extends Controller
      */
     public function update(StorePost $request, $id)
     {
-        
+        // dd('you are updated');
 
         $post = BlogPost::findOrFail($id);
 
@@ -161,8 +220,11 @@ class PostController extends Controller
         $this->authorize('update',$post);
         $validated=$request->validated();
         $post->fill($validated);
-        if($request->hasFile('thumbnail')){
-            $path = $request->file('thumbnail')->store('thumbnail');
+        
+        
+        if($request->hasFile('thumbnail'))
+        {
+            $path = $request->file('thumbnail')->store('thumbnails');
 
             if($post->image)
             {
