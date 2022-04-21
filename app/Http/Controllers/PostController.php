@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BlogPostPosted;
 use App\Http\Requests\StorePost;
 use Illuminate\Support\Facades\Gate;
 use App\Models\BlogPost;
@@ -119,6 +120,8 @@ class PostController extends Controller
                 Image::make(['path' => $path])
             );
         }
+
+        event(new BlogPostPosted($post));
         $request->session()->flash('status','created!');
         return redirect()->route('posts.show',['post'=>$post->id]);
     }
@@ -221,11 +224,14 @@ class PostController extends Controller
         $validated=$request->validated();
         $post->fill($validated);
         
-        
+        dump($request->all());
+        dump($request->hasFile('thumbnail'));
+        die;
+        // dd('hello');
         if($request->hasFile('thumbnail'))
         {
+            // dd('hello');
             $path = $request->file('thumbnail')->store('thumbnails');
-
             if($post->image)
             {
                 Storage::delete($post->image->path);

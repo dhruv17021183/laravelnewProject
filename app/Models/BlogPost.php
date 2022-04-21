@@ -49,17 +49,17 @@ class BlogPost extends Model
         //     Cache::tags(['blog-post'])->forget("blog-post-$blogPost->id}");
         // });
 
-        static::updating(function (BlogPost $blogPost){
-            Cache::forget("blog-post-{$blogPost->id}");
-        });
-        static::restoring(function (BlogPost $blogPost) {
-            $blogPost->comments()->restore();
-        });
+        // static::updating(function (BlogPost $blogPost){
+        //     Cache::forget("blog-post-{$blogPost->id}");
+        // });
+        // static::restoring(function (BlogPost $blogPost) {
+        //     $blogPost->comments()->restore();
+        // });
     }
 
     public function tags()
     {
-        return $this->belongsToMany('App\Models\Tag')->withTimestamps();
+        return $this->morphToMany('App\Models\Tag','taggable')->withTimestamps();
     }
     public function image()
     {

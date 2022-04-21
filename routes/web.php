@@ -35,18 +35,6 @@ use App\Http\Controllers\UserController;
 // })->name('posts.recent.index')->middleware('auth');
 // Route::view('/contact','contact')
 //     ->name('home.contact');
-    // $posts=[
-    //     1=>[
-    //         'title'=>'Intro to laravel',
-    //         'content'=>'this is a short intro',
-    //         'is_new'=>true
-    //     ],
-    //     2=>[
-    //         'title'=>'Intro to php',
-    //         'content'=>'this is a short intro to php',
-    //         'is_new'=>false
-    //      ]
-    //     ];
 
 // Route::get('/posts/{id}',function($id) use ($posts){
     
@@ -89,10 +77,6 @@ use App\Http\Controllers\UserController;
 // });
 
 
-
-
-// Auth::routes();
-Route::get('/index',[PostsController::class,'index']);
 Route::get('/home', [HomeController::class, 'home'])->name('home');
 Route::get('/contact', [App\Http\Controllers\HomeController::class, 'contact'])->name('contact');
 Route::get('/secret',[HomeController::class,'secret'])->name('secret')->middleware('can:home.secret');
@@ -105,13 +89,11 @@ Route::resource('posts',PostController::class)->only(['index','show','create','s
 
 
 Route::resource('posts.comments',PostCommentController::class)->only(['store']);
-// Route::resource('/posts.comments',\App\Http\Controllers\PostCommentController::class , 'store');
-
-// Route::resource('/posts.comments',[PostCommentController::class, 'store']);
 
 Route::get('posts/tag/{tag}',[PostTagController::class,'index'])->name('posts.tag.index');
 
 Route::resource('users',UserController::class)->only(['show','edit','update']);
 Route::resource('users.comments',UserCommentController::class)->only(['store']);
+Route::resource('users',UserController::class)->only(['show','edit','update']);
 
 Auth::routes();

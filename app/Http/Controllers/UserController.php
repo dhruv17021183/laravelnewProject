@@ -13,7 +13,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->authorizeResource(User::class,'user');
+        $this->authorizeResource(User::class,'user');  
     }
     /**
      * Display a listing of the resource.
@@ -54,7 +54,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        
+        return view('users.show',['user' => $user]);
     }
 
     /**
@@ -65,7 +65,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.show', ['user' => $user]);
+        return view('users.edit', ['user' => $user]);
     }
 
     /**
@@ -78,14 +78,17 @@ class UserController extends Controller
     public function update(UpdateUser $request, User $user)
     {
         // return view('users.edit', ['user' => $user]);
-        if($request->hasFile('avatar')){
+        if($request->hasFile('avatar'))
+        {
             $path = $request->file('avatar')->store('avatars');
 
-            if($user->image){
+            if($user->image)
+            {
                 $user->image->path = $path;
                 $user->image->save();
             }
-            else{
+            else
+            {
                 $user->image()->save(
                     Image::make(['path' => $path])
                 );

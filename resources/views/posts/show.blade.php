@@ -28,7 +28,7 @@
 
  
 
-    @update(['date' => $post->created_at, 'name' => $post->user->name])
+    @update(['date' => $post->created_at, 'name' => $post->user->firstname])
     @endupdate
     @update(['date' => $post->updated_at])
             Updated
